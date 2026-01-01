@@ -1,0 +1,50 @@
+<header class="header">
+  <div class="container">
+    <div class="header-content">
+      <!-- Logo -->
+      <div class="logo">
+        <h1><%= config.title %></h1>
+      </div>
+      
+      <!-- Navigation -->
+      <nav class="nav">
+        <% for (let name in theme.menu) { %>
+          <a href="<%= theme.menu[name] %>" class="nav-link"><%= name %></a>
+        <% } %>
+      </nav>
+      
+      <!-- Search and Tools -->
+      <div class="header-tools">
+        <button class="search-btn"><i class="fas fa-search"></i></button>
+        <button class="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <nav class="nav">
+        <% for (let name in theme.menu) { %>
+          <a href="<%= theme.menu[name] %>" class="nav-link"><%= name %></a>
+        <% } %>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<script>
+function toggleMobileMenu() {
+  const mobileMenu = document.getElementById('mobileMenu');
+  mobileMenu.classList.toggle('active');
+}
+
+// 点击外部关闭菜单
+document.addEventListener('click', function(event) {
+  const mobileMenu = document.getElementById('mobileMenu');
+  const menuToggle = document.querySelector('.menu-toggle');
+  
+  if (!mobileMenu.contains(event.target) && !menuToggle.contains(event.target)) {
+    mobileMenu.classList.remove('active');
+  }
+});
+</script>

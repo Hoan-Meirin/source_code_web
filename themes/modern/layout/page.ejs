@@ -1,0 +1,122 @@
+<div class="page-container">
+  <article class="page-content">
+    <header class="page-header">
+      <h1 class="page-title"><%= page.title %></h1>
+      <div class="page-meta">
+        <time class="page-date"><%= date(page.date, 'YYYY-MM-DD') %></time>
+      </div>
+    </header>
+    
+    <div class="page-body">
+      <%- page.content %>
+    </div>
+  </article>
+</div>
+
+<style>
+.page-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.page-content {
+  background: white;
+  border-radius: 16px;
+  padding: 3rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.page-meta {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.page-body {
+  line-height: 1.8;
+  color: #374151;
+}
+
+.page-body h1,
+.page-body h2,
+.page-body h3 {
+  color: #1e293b;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.page-body h2 {
+  font-size: 1.5rem;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+.page-body ul,
+.page-body ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.page-body li {
+  margin: 0.5rem 0;
+}
+
+.page-body blockquote {
+  border-left: 4px solid #2563eb;
+  background: #f8fafc;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.page-body code {
+  background: #f1f5f9;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+}
+
+.page-body pre {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 1.5rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.page-body pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 1rem;
+  }
+  
+  .page-content {
+    padding: 2rem 1.5rem;
+  }
+  
+  .page-title {
+    font-size: 2rem;
+  }
+}
+</style>

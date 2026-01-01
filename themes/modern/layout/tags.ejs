@@ -1,0 +1,307 @@
+<div class="tags-container">
+  <div class="tags-header">
+    <h1 class="tags-title">
+      <i class="fas fa-tags"></i>
+      文章标签
+    </h1>
+    <p class="tags-desc">按标签浏览所有文章，每个标签汇集相关属性的文章</p>
+  </div>
+
+  <div class="tags-grid">
+    <% site.tags.forEach(function(tag) { %>
+      <div class="tag-card">
+        <div class="tag-header-section">
+          <div class="tag-icon">
+            <i class="fas fa-tag"></i>
+          </div>
+          <div class="tag-info">
+            <h3 class="tag-name"><%= tag.name %></h3>
+            <p class="tag-count"><%= tag.posts.length %> 篇文章</p>
+          </div>
+        </div>
+        
+        <div class="tag-posts-list">
+          <% tag.posts.sort('date', -1).forEach(function(post) { %>
+            <div class="post-item">
+              <a href="<%= url_for(post.path) %>" class="post-link">
+                <div class="post-item-header">
+                  <span class="post-title"><%= post.title %></span>
+                  <span class="post-date"><%= date(post.date, 'MM-DD') %></span>
+                </div>
+                <% if (post.categories && post.categories.length > 0) { %>
+                  <div class="post-category">
+                    <i class="fas fa-folder"></i>
+                    <span><%= post.categories.data[0].name %></span>
+                  </div>
+                <% } %>
+              </a>
+            </div>
+          <% }) %>
+        </div>
+        
+        <div class="tag-footer">
+          <a href="<%= url_for(tag.path) %>" class="view-all-btn">
+            查看全部 <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+  
+  <% if (site.tags.length === 0) { %>
+    <div class="empty-tags">
+      <i class="fas fa-tags"></i>
+      <h3>暂无标签</h3>
+      <p>还没有创建任何标签，快去发布文章并设置标签吧！</p>
+    </div>
+  <% } %>
+</div>
+
+<style>
+.tags-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.tags-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.tags-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.tags-title i {
+  color: #2563eb;
+}
+
+.tags-desc {
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+.tags-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.tag-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.tag-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.tag-header-section {
+  display: flex;
+  align-items: center;
+  padding: 2rem;
+  border-bottom: 1px solid #f1f5f9;
+  gap: 1.5rem;
+}
+
+.tag-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  transition: transform 0.3s;
+}
+
+.tag-card:hover .tag-icon {
+  transform: scale(1.1);
+}
+
+.tag-info {
+  flex: 1;
+}
+
+.tag-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.tag-count {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.tag-posts-list {
+  flex: 1;
+  padding: 1.5rem 2rem;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.post-item {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.post-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.post-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: all 0.3s;
+}
+
+.post-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.post-title {
+  flex: 1;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1e293b;
+  line-height: 1.4;
+  transition: color 0.3s;
+}
+
+.post-link:hover .post-title {
+  color: #2563eb;
+}
+
+.post-date {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.post-category {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.post-category i {
+  font-size: 0.7rem;
+}
+
+.tag-footer {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #f1f5f9;
+  text-align: center;
+}
+
+.view-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #2563eb;
+  border-radius: 20px;
+  transition: all 0.3s;
+}
+
+.view-all-btn:hover {
+  background: #2563eb;
+  color: white;
+  transform: translateX(3px);
+}
+
+.view-all-btn i {
+  transition: transform 0.3s;
+}
+
+.view-all-btn:hover i {
+  transform: translateX(2px);
+}
+
+.empty-tags {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #64748b;
+}
+
+.empty-tags i {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  color: #cbd5e1;
+}
+
+.empty-tags h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #475569;
+}
+
+@media (max-width: 768px) {
+  .tags-container {
+    padding: 1rem;
+  }
+  
+  .tags-title {
+    font-size: 2rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .tags-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .tag-header-section {
+    padding: 1.5rem;
+  }
+  
+  .tag-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+  }
+  
+  .tag-posts-list {
+    padding: 1rem 1.5rem;
+    max-height: 300px;
+  }
+  
+  .tag-footer {
+    padding: 1rem 1.5rem;
+  }
+}
+</style>

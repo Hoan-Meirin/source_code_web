@@ -1,0 +1,417 @@
+<!-- 统一使用 post-container 布局 -->
+<div class="post-container">
+  <article class="post-content">
+    <header class="post-header">
+      <% if (page.cover) { %>
+        <div class="post-cover">
+          <img src="<%= page.cover %>" alt="<%= page.title %>" />
+        </div>
+      <% } %>
+      
+      <div class="post-meta-top">
+        <div class="post-categories">
+          <% page.categories.forEach(function(category) { %>
+            <span class="post-category"><%= category.name %></span>
+          <% }) %>
+        </div>
+        <div class="post-tags">
+          <% page.tags.forEach(function(tag) { %>
+            <span class="post-tag">#<%= tag.name %></span>
+          <% }) %>
+        </div>
+      </div>
+      
+      <h1 class="post-title"><%= page.title %></h1>
+      
+      <div class="post-meta">
+        <div class="post-date">
+          <i class="fas fa-calendar"></i>
+          发布于: <%= date(page.date, 'YYYY-MM-DD HH:mm') %>
+        </div>
+        <% if (page.updated && page.updated.toString() !== page.date.toString()) { %>
+          <div class="post-updated">
+            <i class="fas fa-edit"></i>
+            更新于: <%= date(page.updated, 'YYYY-MM-DD HH:mm') %>
+          </div>
+        <% } %>
+      </div>
+    </header>
+    
+    <!-- 根据文章类型选择不同的内容渲染方式 -->
+    <% if ((page.source && page.source.endsWith('.html')) || page.isHtmlArticle) { %>
+      <!-- HTML文章：直接输出内容，让HTML渲染器处理 -->
+      <div class="html-article-content">
+        <%- page.content %>
+      </div>
+    <% } else { %>
+      <!-- Markdown文章：使用标准渲染 -->
+      <div class="post-body">
+        <%- page.content %>
+      </div>
+    <% } %>
+    
+    <footer class="post-footer">
+      <div class="post-nav">
+        <% if (page.prev) { %>
+          <a href="<%= url_for(page.prev.path) %>" class="post-nav-prev">
+            <i class="fas fa-chevron-left"></i>
+            <span>上一篇: <%= page.prev.title %></span>
+          </a>
+        <% } %>
+        <% if (page.next) { %>
+          <a href="<%= url_for(page.next.path) %>" class="post-nav-next">
+            <span>下一篇: <%= page.next.title %></span>
+            <i class="fas fa-chevron-right"></i>
+          </a>
+        <% } %>
+      </div>
+    </footer>
+  </article>
+</div>
+
+<style>
+.post-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+.post-content {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.post-cover {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+
+.post-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.post-header {
+  padding: 2rem 3rem;
+}
+
+.post-meta-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.post-categories {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.post-category {
+  background: #e0f2fe;
+  color: #0277bd;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.post-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.post-tag {
+  background: #f1f5f9;
+  color: #64748b;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+}
+
+.post-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+
+.post-meta {
+  display: flex;
+  gap: 2rem;
+  color: #64748b;
+  font-size: 0.9rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.post-meta i {
+  margin-right: 0.5rem;
+}
+
+.post-body {
+  padding: 0 3rem 2rem;
+  line-height: 1.8;
+  color: #374151;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.post-body h1,
+.post-body h2,
+.post-body h3,
+.post-body h4 {
+  color: #1e293b;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.post-body h2 {
+  font-size: 1.75rem;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+.post-body h3 {
+  font-size: 1.5rem;
+}
+
+.post-body h4 {
+  font-size: 1.25rem;
+}
+
+.post-body p {
+  margin: 1.2rem 0;
+}
+
+.post-body ul,
+.post-body ol {
+  margin: 1.5rem 0;
+  padding-left: 2rem;
+}
+
+.post-body li {
+  margin: 0.8rem 0;
+}
+
+.post-body blockquote {
+  border-left: 4px solid #2563eb;
+  background: #f8fafc;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+}
+
+.post-body code {
+  background: #f1f5f9;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.9rem;
+  color: #e11d48;
+}
+
+.post-body pre {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 1.5rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.post-body pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+  font-size: 0.9rem;
+}
+
+.post-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.post-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.post-body th,
+.post-body td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.post-body th {
+  background: #f8fafc;
+  font-weight: 600;
+  color: #374151;
+}
+
+.post-footer {
+  padding: 2rem 3rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.post-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.post-nav-prev,
+.post-nav-next {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #64748b;
+  transition: all 0.3s;
+  flex: 1;
+  max-width: 45%;
+}
+
+.post-nav-prev:hover,
+.post-nav-next:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.post-nav-next {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+/* HTML文章样式 */
+.html-article-content {
+  padding: 0 3rem 2rem;
+  line-height: 1.8;
+  color: #374151;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 确保HTML文章内的样式正常工作 */
+.html-article-content .container {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.html-article-content .example {
+  margin: 30px 0;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-left: 5px solid #3498db;
+  border-radius: 5px;
+}
+
+.html-article-content .formula-container {
+  background-color: white;
+  padding: 20px;
+  margin: 15px 0;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #ddd;
+  overflow-x: auto;
+}
+
+.html-article-content .code-block {
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  padding: 15px;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  margin: 15px 0;
+  overflow-x: auto;
+}
+
+.html-article-content .explanation {
+  background-color: #e8f4fc;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+.html-article-content .correct {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.html-article-content .incorrect {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .post-container {
+    padding: 1rem;
+  }
+  
+  .post-header,
+  .post-body,
+  .post-footer {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  
+  .post-title {
+    font-size: 2rem;
+  }
+  
+  .post-meta-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .post-nav {
+    flex-direction: column;
+  }
+  
+  .post-nav-prev,
+  .post-nav-next {
+    max-width: 100%;
+  }
+  
+  /* HTML文章移动端样式 */
+  .html-article-content {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  
+  .html-article-content .container {
+    padding: 20px;
+    margin-top: 10px;
+  }
+  
+  .html-article-content .example {
+    margin: 20px 0;
+    padding: 15px;
+  }
+}
+</style>

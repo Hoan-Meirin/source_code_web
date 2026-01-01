@@ -1,0 +1,75 @@
+menu:
+  首页: /
+  专栏: /categories/
+  文章: /archives/
+  标签: /tags/
+  关于: /about/
+index:
+  banner_title: 'Welcome to My Blog'
+  banner_subtitle: 'Sharing Knowledge & Experience'
+  banner_desc: 'Explore articles about programming, algorithms, and technology'
+tech_tags:
+  - name: 算法
+    color: '#4285f4'
+    icon: 🧮
+  - name: C++
+    color: '#00599c'
+    icon: 💻
+  - name: C语言
+    color: '#a8b9cc'
+    icon: ⚡
+  - name: 数据结构
+    color: '#ff6b6b'
+    icon: 📊
+  - name: 数据结构
+    color: '#ffa726'
+    icon: 🏗️
+  - name: Linux
+    color: '#fdd835'
+    icon: 🐧
+  - name: 数字电路
+    color: '#ffc107'
+    icon: 🧮
+category_cards:
+  - title: 数电
+    color: '#ff6b6b'
+    desc: 从入门到入土
+  - title: 项目合集
+    color: '#4ecdc4'
+    desc: 经验分享
+  - title: 算法分享
+    color: '#45b7d1'
+    desc: 其实我不会算法
+sidebar:
+  avatar: /images/avatar.png
+  name: HoanMeirin
+  desc: Hoan-Meirin
+  social:
+    github: 'https://github.com/Hoan-Meirin'
+    # email: '#'
+    # wechat: '#'
+announcement:
+  enable: true
+  title: 公告
+  content: 今天又是美好的一天
+# Live2D 看板娘配置
+live2d:
+  enable: true
+  position: "right"
+  width: 150
+  height: 300
+  hOffset: 0
+  vOffset: -20
+  mobile:
+    show: true
+    scale: 0.5
+  react:
+    opacity: 0.8
+    opacityOnHover: 0.2
+  use_local: true  # 启用本地模型
+  local_model: "anon_2151"  # 本地模型名称
+math: true
+highlight:
+  enable: true
+  theme: github
+  copy_btn: true

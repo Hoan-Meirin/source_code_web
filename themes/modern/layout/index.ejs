@@ -1,0 +1,196 @@
+<!-- Hero Banner -->
+<section class="hero-banner">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title"><%= theme.index.banner_title %></h1>
+        <h2 class="hero-subtitle"><%= theme.index.banner_subtitle %></h2>
+        <p class="hero-desc"><%= theme.index.banner_desc %></p>
+      </div>
+      <div class="hero-visual">
+        <!-- 推荐文章大卡片 -->
+        <% 
+          const recommendedPost = site.posts.sort('date', -1).first();
+          if (recommendedPost) {
+        %>
+          <div class="featured-article-card" style="background-image: url('<%= recommendedPost.cover || '/images/default-bg.jpg' %>')">
+            <div class="featured-card-overlay"></div>
+            <div class="featured-card-content">
+              <div class="featured-card-label">
+                <span class="featured-label-text">推荐阅读</span>
+              </div>
+              <h2 class="featured-card-title"><%= recommendedPost.title %></h2>
+              <div class="featured-card-meta">
+                <% if (recommendedPost.categories && recommendedPost.categories.length > 0) { %>
+                  <span class="featured-meta-item">
+                    <i class="fas fa-folder"></i> <%= recommendedPost.categories.data[0].name %>
+                  </span>
+                <% } %>
+                <span class="featured-meta-item">
+                  <i class="fas fa-calendar"></i> <%= date(recommendedPost.date, 'YYYY-MM-DD') %>
+                </span>
+              </div>
+              <a href="<%= url_for(recommendedPost.path) %>" class="featured-card-btn">
+                <span>阅读文章</span>
+                <i class="fas fa-arrow-right"></i>
+              </a>
+              <a href="/recommendations/" class="featured-card-btn featured-card-btn-secondary">
+                <span>更多推荐</span>
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        <% } else { %>
+          <div class="featured-article-card featured-card-empty">
+            <div class="featured-card-overlay"></div>
+            <div class="featured-card-content">
+              <div class="featured-card-label">
+                <span class="featured-label-text">敬请期待</span>
+              </div>
+              <h2 class="featured-card-title">暂无推荐文章</h2>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Tech Tags -->
+<section class="tech-tags-section">
+  <div class="container">
+    <div class="tech-tags">
+      <% theme.tech_tags.forEach(function(tag) { %>
+        <span class="tech-tag" style="background-color: <%= tag.color %>">
+          <span class="tag-icon"><%= tag.icon %></span>
+          <%= tag.name %>
+        </span>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- Category Cards -->
+<section class="category-section">
+  <div class="container">
+    <div class="category-cards">
+      <% theme.category_cards.forEach(function(card) { %>
+        <div class="category-card" style="background-color: <%= card.color %>">
+          <h3><%= card.title %></h3>
+          <p><%= card.desc %></p>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- Main Layout with Sidebar -->
+<div class="index-layout">
+  <!-- Main Content -->
+  <main class="index-main">
+    <!-- Latest Posts -->
+    <section class="course-section">
+      <div class="section-header">
+        <h2>最新文章</h2>
+        <a href="/archives/" class="view-all-btn">查看全部 <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="course-grid">
+        <% site.posts.sort('date', -1).limit(6).forEach(function(post) { %>
+          <article class="course-card">
+            <a href="<%= url_for(post.path) %>" class="course-link">
+              <div class="course-image">
+                <% if (post.cover) { %>
+                  <img src="<%= post.cover %>" alt="<%= post.title %>" />
+                <% } else { %>
+                  <div class="default-cover">
+                    <i class="fas fa-file-alt"></i>
+                    <span>文章</span>
+                  </div>
+                <% } %>
+              </div>
+              <div class="course-content">
+                <div class="course-meta">
+                  <% if (post.categories && post.categories.length > 0) { %>
+                    <span class="course-category"><%= post.categories.data[0].name %></span>
+                  <% } %>
+                  <div class="course-tags">
+                    <% if (post.tags && post.tags.length > 0) { %>
+                      <% post.tags.limit(3).forEach(function(tag) { %>
+                        <span class="course-tag"><%= tag.name %></span>
+                      <% }) %>
+                    <% } %>
+                  </div>
+                </div>
+                <h3 class="course-title"><%= post.title %></h3>
+                <% if (post.description || post.excerpt) { %>
+                  <p class="course-excerpt"><%= post.description || strip_html(post.excerpt).substring(0, 100) %>...</p>
+                <% } %>
+                <div class="course-dates">
+                  <span><i class="fas fa-calendar"></i> <%= date(post.date, 'YYYY-MM-DD') %></span>
+                  <% if (post.updated && post.updated.toString() !== post.date.toString()) { %>
+                    <span><i class="fas fa-edit"></i> <%= date(post.updated, 'YYYY-MM-DD') %></span>
+                  <% } %>
+                </div>
+              </div>
+            </a>
+          </article>
+        <% }) %>
+      </div>
+      
+      <!-- 如果没有文章，显示示例卡片 -->
+      <% if (site.posts.length === 0) { %>
+        <div class="course-grid">
+          <% theme.course_cards.forEach(function(course) { %>
+            <article class="course-card">
+              <div class="course-image">
+                <img src="<%= course.image %>" alt="<%= course.title %>" />
+              </div>
+              <div class="course-content">
+                <div class="course-meta">
+                  <span class="course-category"><%= course.category %></span>
+                  <div class="course-tags">
+                    <% course.tags.forEach(function(tag) { %>
+                      <span class="course-tag"><%= tag %></span>
+                    <% }) %>
+                  </div>
+                </div>
+                <h3 class="course-title"><%= course.title %></h3>
+                <div class="course-dates">
+                  <span>发布于: <%= course.date %></span>
+                  <span>更新于: <%= course.update %></span>
+                </div>
+              </div>
+            </article>
+          <% }) %>
+        </div>
+      <% } %>
+    </section>
+  </main>
+
+  <!-- Sidebar -->
+  <aside class="index-sidebar">
+    <!-- Avatar Card -->
+    <div class="sidebar-card avatar-card">
+      <div class="avatar">
+        <img src="<%= theme.sidebar.avatar %>" alt="<%= theme.sidebar.name %>" />
+      </div>
+      <h3><%= theme.sidebar.name %></h3>
+      <p><%= theme.sidebar.desc %></p>
+      <div class="social-links">
+        <% for (let platform in theme.sidebar.social) { %>
+          <a href="<%= theme.sidebar.social[platform] %>" class="social-link">
+            <i class="fab fa-<%= platform %>"></i>
+          </a>
+        <% } %>
+      </div>
+    </div>
+    
+    <!-- Announcement -->
+    <% if (theme.announcement.enable) { %>
+      <div class="sidebar-card announcement-card">
+        <h4><i class="fas fa-bullhorn"></i> <%= theme.announcement.title %></h4>
+        <p><%= theme.announcement.content %></p>
+      </div>
+    <% } %>
+  </aside>
+</div>

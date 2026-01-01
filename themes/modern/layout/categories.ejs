@@ -1,0 +1,315 @@
+<div class="categories-container">
+  <div class="categories-header">
+    <h1 class="categories-title">
+      <i class="fas fa-book"></i>
+      专栏分类
+    </h1>
+    <p class="categories-desc">按专栏浏览所有文章，每个专栏汇集相关主题的优质内容</p>
+  </div>
+
+  <div class="categories-grid">
+    <% site.categories.forEach(function(category) { %>
+      <div class="category-card">
+        <div class="category-header-section">
+          <div class="category-icon">
+            <i class="fas fa-folder"></i>
+          </div>
+          <div class="category-info">
+            <h3 class="category-name"><%= category.name %></h3>
+            <p class="category-count"><%= category.posts.length %> 篇文章</p>
+          </div>
+        </div>
+        
+        <div class="category-posts-list">
+          <% category.posts.sort('date', -1).forEach(function(post) { %>
+            <div class="post-item">
+              <a href="<%= url_for(post.path) %>" class="post-link">
+                <div class="post-item-header">
+                  <span class="post-title"><%= post.title %></span>
+                  <span class="post-date"><%= date(post.date, 'MM-DD') %></span>
+                </div>
+                <% if (post.tags && post.tags.length > 0) { %>
+                  <div class="post-tags">
+                    <% post.tags.limit(2).forEach(function(tag) { %>
+                      <span class="tag"><%= tag.name %></span>
+                    <% }) %>
+                  </div>
+                <% } %>
+              </a>
+            </div>
+          <% }) %>
+        </div>
+        
+        <div class="category-footer">
+          <a href="<%= url_for(category.path) %>" class="view-all-btn">
+            查看全部 <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+  
+  <% if (site.categories.length === 0) { %>
+    <div class="empty-categories">
+      <i class="fas fa-folder-open"></i>
+      <h3>暂无分类</h3>
+      <p>还没有创建任何分类，快去发布文章并设置分类吧！</p>
+    </div>
+  <% } %>
+</div>
+
+<style>
+.categories-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.categories-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.categories-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.categories-title i {
+  color: #2563eb;
+}
+
+.categories-desc {
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.category-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.category-header-section {
+  display: flex;
+  align-items: center;
+  padding: 2rem;
+  border-bottom: 1px solid #f1f5f9;
+  gap: 1.5rem;
+}
+
+.category-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  transition: transform 0.3s;
+}
+
+.category-card:hover .category-icon {
+  transform: scale(1.1);
+}
+
+.category-info {
+  flex: 1;
+}
+
+.category-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.category-count {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.category-posts-list {
+  flex: 1;
+  padding: 1.5rem 2rem;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.post-item {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.post-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.post-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: all 0.3s;
+}
+
+.post-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.post-title {
+  flex: 1;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1e293b;
+  line-height: 1.4;
+  transition: color 0.3s;
+}
+
+.post-link:hover .post-title {
+  color: #2563eb;
+}
+
+.post-date {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.post-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.post-tags .tag {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  background: #f0f4f8;
+  color: #2563eb;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.post-link:hover .post-tags .tag {
+  background: #e0f2fe;
+}
+
+.category-footer {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #f1f5f9;
+  text-align: center;
+}
+
+.view-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #2563eb;
+  border-radius: 20px;
+  transition: all 0.3s;
+}
+
+.view-all-btn:hover {
+  background: #2563eb;
+  color: white;
+  transform: translateX(3px);
+}
+
+.view-all-btn i {
+  transition: transform 0.3s;
+}
+
+.view-all-btn:hover i {
+  transform: translateX(2px);
+}
+
+.empty-categories {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #64748b;
+}
+
+.empty-categories i {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  color: #cbd5e1;
+}
+
+.empty-categories h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #475569;
+}
+
+@media (max-width: 768px) {
+  .categories-container {
+    padding: 1rem;
+  }
+  
+  .categories-title {
+    font-size: 2rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .categories-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .category-header-section {
+    padding: 1.5rem;
+  }
+  
+  .category-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+  }
+  
+  .category-posts-list {
+    padding: 1rem 1.5rem;
+    max-height: 300px;
+  }
+  
+  .category-footer {
+    padding: 1rem 1.5rem;
+  }
+}
+</style>

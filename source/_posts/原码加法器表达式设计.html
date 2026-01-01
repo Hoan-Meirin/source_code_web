@@ -1,0 +1,150 @@
+---
+title: "原码加法器表达式设计"
+cover: /images/adder_.png
+date: 2025-12-19 19:57
+categories:
+  - 数电
+tags:
+  - 数电
+layout: post
+math: true
+---
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>原码加法器表达式设计</title>
+  <!-- KaTeX CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqxRb3N/JGzGciDQV0XJi5c7IqK+" crossorigin="anonymous">
+  <!-- KaTeX JS -->
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8"
+    crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"
+    crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+</head>
+<body>
+
+<h2>原码加法器表达式设计普通思路</h2>
+
+<p>Result of 4 bits calculation \( A + B \):</p>
+
+\[
+\text{Result} = 
+\begin{cases}
+A + B & \text{sign}(A) = 0 \text{ and } \text{sign}(B) = 0 \\
+A - |B| \text{ or } -(|B| - A) & \text{sign}(A) = 0 \text{ and } \text{sign}(B) = 1 \\
+B - |A| \text{ or } -(|A| - B) & \text{sign}(A) = 1 \text{ and } \text{sign}(B) = 0 \\
+-(|A| + |B|) & \text{sign}(A) = 1 \text{ and } \text{sign}(B) = 1
+\end{cases}
+\]
+
+<p>The expression for \( \text{sign}(A) \) is:</p>
+
+\[
+\text{sign}(A) = 
+\begin{cases}
+0 & A \geq 0 \\
+1 & A < 0
+\end{cases}
+\]
+
+<p>The expression for \( |A| \) is:</p>
+
+\[
+|A| = A \,\&\, \texttt{4'b0111}
+\]
+
+<p>The expression for opposite number is:</p>
+
+\[
+-A = A \oplus \texttt{4'b1000}
+\]
+
+<p>表达式要求被减数必须大于减数，这是为了使实现的减法器更加简单。</p>
+
+<h3>更进一步——对称性</h3>
+
+<p>考虑到加法的对称性，我们的表达式可以进一步化简：</p>
+
+\[
+\begin{aligned}
+&\text{let neg } &&= (\text{sign}(A) == 1 ) \, ? \, A : B \\
+&\text{let pos } &&= (\text{neg == A}) \, ? \, B : A \\
+&\text{let plus} &&= A + B
+\end{aligned}
+\]
+
+<p>Result of 4 bits calculation \( A + B \):</p>
+
+\[
+\text{Result} = 
+\begin{cases}
+\text{plus} \oplus \{(\text{sign}(A) == 1),\; \texttt{3'b000}\} & \text{if } \text{sign}(A) = \text{sign}(B) \\
+\text{pos} - |\text{neg}| \text{ or } -(|\text{neg}| - \text{pos}) & \text{if } \text{sign}(A) \neq \text{sign}(B)
+\end{cases}
+\]
+
+<p>Where \( \{(\text{sign}(A) == 1),\; \texttt{3'b000}\} \) represents bit concatenation:</p>
+
+<p>For example:</p>
+
+\[
+\{1'b1,\; 3'b000\} = 4'b1000,\quad \{1'b0,\; 3'b001\} = 4'b0001
+\]
+
+<p>可以看到，这里不再使用 \( -(|A| + |B|) \) 而是选择了 \( -(A + B) \)，这是因为在数位有限的四位同符号加法中，它们是等价的。</p>
+
+<p>另外，此处仍需遵守被减数大于减数的要求，这有助于我们实现更简单的减法器。而其他的改动很容易理解，此处不再赘述。</p>
+
+<h3>具体实现</h3>
+
+<p><strong>加法器</strong>：略</p>
+
+<p><strong>减法器</strong></p>
+
+<p>全减器的实现和全加器类似，我们不需要考虑是否存在最高位。加法器中，这一点减少了处理难度，而在减法器中，这还可以带来额外的性质，但在本节内容中不会使用，未来你们大概也用不到。</p>
+
+<p><strong>输入</strong>：设某一位上，被减数为 \( X_i \)，减数为 \( Y_i \)，来自低位的借位信号为 \( B_i \)</p>
+
+<p><strong>输出</strong>：当前位结果为 \( Z_o \)，向高位传递的借位信号为 \( B_o \)</p>
+
+<p>其中，下标 \( i \) 和 \( o \) 分别表示信号属性是输入还是输出。</p>
+
+<p>对于借位信号，由于我们前面的要求是被减数大于减数，故而借位始终是成功的，由此得到我们的真值表：</p>
+
+<p>（真值表略）</p>
+
+\[
+\begin{array}{|c|c|c|c|c|}
+\hline
+X_i & Y_i & B_i & Z_o & B_o \\
+\hline
+0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 1 & 1 & 1 \\
+0 & 1 & 0 & 1 & 1 \\
+0 & 1 & 1 & 0 & 1 \\
+1 & 0 & 0 & 1 & 0 \\
+1 & 0 & 1 & 0 & 0 \\
+1 & 1 & 0 & 0 & 0 \\
+1 & 1 & 1 & 1 & 1 \\
+\hline
+\end{array}
+\]
+
+<p>依据真值表，显然有：</p>
+
+\[
+\begin{aligned}
+Z_o &= X_i \oplus Y_i \oplus B_i \\
+B_o &= \bar{X_i}B_i + \bar{X_i}Y_i + Y_iB_i
+\end{aligned}
+\]
+
+<p>为了实现满足要求的减法器，我们还需要确定被减数和减数，以及是否需要取相反数，其实现较为简单，此处不再赘述。</p>
+
+</body>
+</html>

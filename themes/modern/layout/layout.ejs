@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="<%= config.language %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><% if (page.title) { %><%= page.title %> | <% } %><%= config.title %></title>
+  <meta name="description" content="<%= config.description %>">
+  <meta name="keywords" content="<%= config.keywords %>">
+  <meta name="author" content="<%= config.author %>">
+  
+  <!-- CSS -->
+  <%- css('css/style') %>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  
+  <!-- KaTeX CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn" crossorigin="anonymous">
+  
+  <!-- KaTeX JavaScript -->
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+</head>
+<body>
+  <!-- Header -->
+  <%- partial('_partial/header') %>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+    <%- body %>
+  </main>
+  
+  <!-- Footer -->
+  <%- partial('_partial/footer') %>
+  
+  <!-- Live2D -->
+  <% if (theme.live2d && theme.live2d.enable) { %>
+    <div id="live2d-widget" style="position: fixed; bottom: 0; right: 20px; z-index: 999; pointer-events: none; overflow: visible;">
+      <canvas id="live2dcanvas" width="450" height="600"></canvas>
+    </div>
+  <% } %>
+  
+  <!-- Scripts -->
+  <%- js('js/script') %>
+  <%- js('js/live2d-controller-working') %>
+  <%- js('js/live2d-mobile') %>
+  <%- js('js/live2d-hotkeys') %>
+  
+  <!-- Live2D Scripts -->
+  <% if (theme.live2d && theme.live2d.enable) { %>
+    <% if (theme.live2d.use_local) { %>
+      <!-- 使用本地Live2D模型 -->
+      <script src="https://cdn.jsdelivr.net/npm/live2d-widget@3.1.4/lib/L2Dwidget.min.js"></script>
+      <script>
+        console.log('🎭 初始化本地Live2D模型...');
+        
+        // 从localStorage获取保存的模型，或使用默认模型
+        function getCurrentModel() {
+          const saved = localStorage.getItem('live2d-current-model');
+          return saved || '<%= theme.live2d.local_model || 'anon_2151' %>';
+        }
+        
+        // 获取正确的模型路径
+        function getModelPath(modelName) {
+          const modelPaths = {
+            'anon_2151': '/live2d/bang/anon_2151/model.json',
+            'hina_1387': '/live2d/bang/hina_1387/model.json',
+            'kkr_265': '/live2d/bang/kkr_265/model.json',
+            'ksm_270': '/live2d/bang/ksm_270/model.json',
+            'ksm_271': '/live2d/bang/ksm_271/model.json',
+            'mzm': '/live2d/bang/mzm/model.json',
+            'nidie': '/live2d/bang/nidie/model.json',
+            'tomorin': '/live2d/bang/tomorin/model.json'
+          };
+          return modelPaths[modelName] || modelPaths['anon_2151'];
+        }
+        
+        // 加载配置文件
+        function loadConfigFile() {
+          try {
+            const saved = localStorage.getItem('live2d-config');
+            if (saved) {
+              return JSON.parse(saved);
+            }
+          } catch (e) {
+            console.warn('加载Live2D配置失败:', e);
+          }
+          return null;
+        }
+        
+        const currentModel = getCurrentModel();
+        const modelPath = getModelPath(currentModel);
+        console.log('📍 当前模型:', currentModel);
+        console.log('📍 模型路径:', modelPath);
+        
+        L2Dwidget.init({
+          "model": {
+            "jsonPath": modelPath,
+            "scale": 1
+          },
+          "display": {
+            "position": "<%= theme.live2d.position || 'right' %>",
+            "width": 450,
+            "height": 600,
+            "hOffset": <%= theme.live2d.hOffset || 0 %>,
+            "vOffset": -60
+          },
+          "mobile": {
+            "show": <%= theme.live2d.mobile && theme.live2d.mobile.show ? 'true' : 'false' %>,
+            "scale": <%= (theme.live2d.mobile && theme.live2d.mobile.scale) || 1.0 %>
+          },
+          "react": {
+            "opacity": 1.0,
+            "opacityOnHover": <%= (theme.live2d.react && theme.live2d.react.opacityOnHover) || 0.2 %>
+          },
+          "dialog": {
+            "enable": false
+          },
+          "log": false
+        });
+        
+        // 调试信息
+        console.log('📍 Live2D模型路径:', modelPath);
+        
+        // 测试模型文件是否可访问
+        fetch(modelPath)
+          .then(response => {
+            if (response.ok) {
+              console.log('✅ 模型配置文件加载成功');
+              return response.json();
+            } else {
+              console.error('❌ 模型配置文件加载失败:', response.status);
+              throw new Error('配置文件不存在');
+            }
+          })
+          .then(data => {
+            console.log('📋 模型配置:', data);
+          })
+          .catch(error => {
+            console.error('🚨 Live2D加载错误:', error);
+          });
+      </script>
+    <% } else { %>
+      <!-- 使用CDN Live2D模型 -->
+      <script src="https://cdn.jsdelivr.net/npm/live2d-widget@3.1.4/lib/L2Dwidget.min.js"></script>
+      <script>
+        console.log('🎭 初始化CDN Live2D模型...');
+        L2Dwidget.init({
+          "model": {
+            "jsonPath": "https://cdn.jsdelivr.net/npm/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json",
+            "scale": 1
+          },
+          "display": {
+            "position": "<%= theme.live2d.position || 'right' %>",
+            "width": <%= theme.live2d.width || 150 %>,
+            "height": <%= theme.live2d.height || 300 %>,
+            "hOffset": <%= theme.live2d.hOffset || 0 %>,
+            "vOffset": <%= theme.live2d.vOffset || -20 %>
+          },
+          "mobile": {
+            "show": <%= theme.live2d.mobile && theme.live2d.mobile.show ? 'true' : 'false' %>,
+            "scale": <%= (theme.live2d.mobile && theme.live2d.mobile.scale) || 0.5 %>
+          },
+          "react": {
+            "opacity": <%= (theme.live2d.react && theme.live2d.react.opacity) || 0.8 %>,
+            "opacityOnHover": <%= (theme.live2d.react && theme.live2d.react.opacityOnHover) || 0.2 %>
+          }
+        });
+      </script>
+    <% } %>
+  <% } %>
+  
+  <!-- KaTeX Auto-render -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$', right: '$', display: true},
+          {left: '$$', right: '$$', display: false},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '\\(', right: '\\)', display: false}
+        ],
+        throwOnError: false
+      });
+      console.log('✅ KaTeX rendering complete');
+    });
+  </script>
+</body>
+</html>

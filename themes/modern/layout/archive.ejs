@@ -1,0 +1,338 @@
+<div class="archive-container">
+  <div class="archive-header">
+    <h1 class="archive-title">
+      <i class="fas fa-archive"></i>
+      文章归档
+      <span class="archive-count">(<%= site.posts.length %> 篇文章)</span>
+    </h1>
+    <p class="archive-desc">按时间顺序浏览所有文章</p>
+  </div>
+
+  <div class="archive-content">
+    <% if (site.posts.length > 0) { %>
+      <% 
+      // 将posts转换为数组并按年份分组
+      let postsArray = [];
+      site.posts.sort('date', -1).forEach(function(post) {
+        postsArray.push(post);
+      });
+      
+      let yearGroups = {};
+      postsArray.forEach(function(post) {
+        let year = date(post.date, 'YYYY');
+        if (!yearGroups[year]) {
+          yearGroups[year] = [];
+        }
+        yearGroups[year].push(post);
+      });
+      
+      let years = Object.keys(yearGroups).sort((a, b) => b - a);
+      %>
+      
+      <% years.forEach(function(year) { %>
+        <div class="year-section">
+          <h2 class="year-title">
+            <i class="fas fa-calendar-alt"></i>
+            <%= year %>
+            <span class="year-count">(<%= yearGroups[year].length %> 篇)</span>
+          </h2>
+          
+          <div class="year-posts">
+            <% yearGroups[year].forEach(function(post) { %>
+              <article class="archive-post">
+                <div class="post-date">
+                  <span class="month"><%= date(post.date, 'MM') %></span>
+                  <span class="day"><%= date(post.date, 'DD') %></span>
+                </div>
+                
+                <div class="post-info">
+                  <h3 class="post-title">
+                    <a href="<%= url_for(post.path) %>"><%= post.title %></a>
+                  </h3>
+                  
+                  <div class="post-meta">
+                    <% if (post.categories && post.categories.length > 0) { %>
+                      <span class="post-category">
+                        <i class="fas fa-folder"></i>
+                        <%= post.categories.data[0].name %>
+                      </span>
+                    <% } %>
+                    
+                    <% if (post.tags && post.tags.length > 0) { %>
+                      <div class="post-tags">
+                        <i class="fas fa-tags"></i>
+                        <% post.tags.limit(3).forEach(function(tag, index) { %>
+                          <span class="tag"><%= tag.name %></span><% if (index < Math.min(post.tags.length, 3) - 1) { %>, <% } %>
+                        <% }) %>
+                      </div>
+                    <% } %>
+                  </div>
+                  
+                  <% if (post.description || post.excerpt) { %>
+                    <p class="post-excerpt">
+                      <%= post.description || strip_html(post.excerpt).substring(0, 150) %>...
+                    </p>
+                  <% } %>
+                </div>
+                
+                <div class="post-actions">
+                  <a href="<%= url_for(post.path) %>" class="read-more">
+                    阅读全文 <i class="fas fa-arrow-right"></i>
+                  </a>
+                </div>
+              </article>
+            <% }) %>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <div class="empty-archive">
+        <i class="fas fa-file-alt"></i>
+        <h3>暂无文章</h3>
+        <p>还没有发布任何文章，快去创作第一篇文章吧！</p>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<style>
+.archive-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.archive-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.archive-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.archive-title i {
+  color: #2563eb;
+}
+
+.archive-count {
+  font-size: 1.2rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.archive-desc {
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+.year-section {
+  margin-bottom: 3rem;
+}
+
+.year-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #2563eb;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e0f2fe;
+}
+
+.year-count {
+  font-size: 1rem;
+  color: #64748b;
+  font-weight: 400;
+}
+
+.year-posts {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.archive-post {
+  display: flex;
+  gap: 2rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transition: all 0.3s;
+  align-items: flex-start;
+}
+
+.archive-post:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.post-date {
+  flex-shrink: 0;
+  text-align: center;
+  background: #2563eb;
+  color: white;
+  border-radius: 8px;
+  padding: 0.75rem;
+  min-width: 60px;
+}
+
+.post-date .month {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.post-date .day {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.post-info {
+  flex: 1;
+}
+
+.post-title {
+  margin-bottom: 0.75rem;
+}
+
+.post-title a {
+  color: #1e293b;
+  text-decoration: none;
+  font-size: 1.25rem;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.post-title a:hover {
+  color: #2563eb;
+}
+
+.post-meta {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  color: #64748b;
+  flex-wrap: wrap;
+}
+
+.post-category {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.post-tags {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.post-tags .tag {
+  color: #2563eb;
+}
+
+.post-excerpt {
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.post-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border: 2px solid #2563eb;
+  border-radius: 20px;
+  transition: all 0.3s;
+  font-size: 0.9rem;
+}
+
+.read-more:hover {
+  background: #2563eb;
+  color: white;
+  transform: translateX(3px);
+}
+
+.read-more i {
+  transition: transform 0.3s;
+}
+
+.read-more:hover i {
+  transform: translateX(2px);
+}
+
+.empty-archive {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #64748b;
+}
+
+.empty-archive i {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  color: #cbd5e1;
+}
+
+.empty-archive h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #475569;
+}
+
+@media (max-width: 768px) {
+  .archive-container {
+    padding: 1rem;
+  }
+  
+  .archive-title {
+    font-size: 2rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .archive-post {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .post-date {
+    align-self: flex-start;
+  }
+  
+  .post-meta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .post-actions {
+    align-self: flex-start;
+  }
+}
+</style>
