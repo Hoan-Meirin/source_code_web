@@ -101,26 +101,28 @@ deploy:
   type: git
   repository: git@github.com:Hoan-Meirin/Hoan-Meirin.github.io.git
   branch: main
-# Live2D 配置
+
+# Live2D Helper
+## https://github.com/EYHN/hexo-helper-live2d
 live2d:
   enable: true
-  scriptFrom: local # 默认
-  pluginRootPath: live2dw/ # 插件在站点上的根目录(相对路径)
-  pluginJsPath: lib/ # 脚本文件相对与插件根目录路径
-  pluginModelPath: assets/ # 模型文件相对与插件根目录路径
-  tagMode: false # 标签模式, 是否仅替换 live2d tag标签而非插入到所有页面中
-  debug: false # 调试, 是否在控制台输出日志
+  scriptFrom: local
+  pluginRootPath: live2dw/
+  pluginJsPath: lib/
+  pluginModelPath: assets/
+  tagMode: false
+  log: false
   model:
-    use: live2d-widget-model-shizuku # npm-module package name
-    display:
-      position: right
-      width: 300
-      height: 600
-      hOffset: 0
-      vOffset: 0
+    use: ./live2d/bang/anon/2151
+  display:
+    position: right
+    width: 450
+    height: 900
+    hOffset: 0
+    vOffset: -120
   mobile:
-    show: true # 是否在移动设备上显示
-    scale: 0.5 # 移动设备上的缩放
+    show: true
+    scale: 0.5
   react:
-    opacity: 1 # 模型透明度
-    opacityOnHover: 0.2 # 鼠标悬停时的透明度
+    opacity: 1
+    opacityOnHover: 0.2

@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // 随机显示一些消息
       const messages = [
         '你好呀！欢迎来到我的的博客~',
-        '今天也要好好学习算法哦！',
+        '今天也要好好学习哦！',
         '记得多看看技术文章呢~',
         '编程路上，我们一起加油！',
         '有什么问题可以在评论区留言哦~'

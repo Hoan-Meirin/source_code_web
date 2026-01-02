@@ -52,22 +52,6 @@ announcement:
   enable: true
   title: 公告
   content: 今天又是美好的一天
-# Live2D 看板娘配置
-live2d:
-  enable: true
-  position: "right"
-  width: 150
-  height: 300
-  hOffset: 0
-  vOffset: -20
-  mobile:
-    show: true
-    scale: 0.5
-  react:
-    opacity: 0.8
-    opacityOnHover: 0.2
-  use_local: true  # 启用本地模型
-  local_model: "anon_2151"  # 本地模型名称
 math: true
 highlight:
   enable: true
